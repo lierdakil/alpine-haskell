@@ -1,8 +1,5 @@
 FROM alpine:3.12 AS base
 
-ARG GHC_VERSION
-ARG CABAL_VERSION
-
 # Add ghcup's bin directory to the PATH so that the versions of GHC it builds
 # are available in the build layers
 ENV GHCUP_INSTALL_BASE_PREFIX=/
@@ -40,9 +37,13 @@ RUN echo "Downloading and installing ghcup" &&\
     fi ;\
     chmod +x /usr/bin/ghcup
 
-RUN ghcup install ghc $GHC_VERSION
+ARG GHC_VERSION
+RUN ghcup install ghc $GHC_VERSION &&\
+    ghcup set ghc $GHC_VERSION
 
-RUN ghcup install cabal ${CABAL_VERSION}
+ARG CABAL_VERSION
+RUN ghcup install cabal $CABAL_VERSION &&\
+    ghcup set cabal $CABAL_VERSION
 
 # Download, verify, and install stack
 RUN echo "Downloading and installing stack" &&\
@@ -57,7 +58,5 @@ RUN echo "Downloading and installing stack" &&\
     tar -xvzf /tmp/stack-${STACK_VERSION}-linux-x86_64-static.tar.gz &&\
     cp -L /tmp/stack-${STACK_VERSION}-linux-x86_64-static/stack /usr/bin/stack &&\
     rm /tmp/stack-${STACK_VERSION}-linux-x86_64-static.tar.gz &&\
-    rm -rf /tmp/stack-${STACK_VERSION}-linux-x86_64-static
-
-RUN ghcup set ghc ${GHC_VERSION} &&\
+    rm -rf /tmp/stack-${STACK_VERSION}-linux-x86_64-static &&\
     stack config set system-ghc --global true
