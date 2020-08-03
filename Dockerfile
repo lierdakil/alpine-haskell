@@ -8,6 +8,8 @@ ENV PATH=/.ghcup/bin:$PATH
 # Install the basic required dependencies to run 'ghcup' and 'stack'
 # bash and shadow needed for stack --docker
 # openssh-client needed for stack private packages
+# binutils-gold needed for ld.gold
+# zlib-static is just a common dependency
 RUN apk upgrade --no-cache &&\
     apk add --no-cache \
         curl \
@@ -23,7 +25,9 @@ RUN apk upgrade --no-cache &&\
         perl \
         bash \
         shadow \
-        openssh-client
+        openssh-client \
+        binutils-gold \
+        zlib-static
 
 # Download, verify, and install ghcup
 RUN echo "Downloading and installing ghcup" &&\
