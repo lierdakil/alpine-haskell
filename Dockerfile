@@ -31,8 +31,8 @@ RUN apk upgrade --no-cache &&\
 
 # Download, verify, and install ghcup
 RUN echo "Downloading and installing ghcup" &&\
-    GHCUP_VERSION="0.1.10" &&\
-    GHCUP_SHA256="87661bd127f857b990174ac8d96ad4bd629865306b2058c8cc64d3b36ed317c9  /usr/bin/ghcup" &&\
+    GHCUP_VERSION="0.1.12" &&\
+    GHCUP_SHA256="83088569ddf2d35df494f440dedd9c8eb2a53276d665f7de731f6554986c2ddb  /usr/bin/ghcup" &&\
     cd /tmp &&\
     wget -O /usr/bin/ghcup "https://downloads.haskell.org/~ghcup/${GHCUP_VERSION}/x86_64-linux-ghcup-${GHCUP_VERSION}" &&\
     if ! echo -n "${GHCUP_SHA256}" | sha256sum -c -; then \
@@ -42,7 +42,7 @@ RUN echo "Downloading and installing ghcup" &&\
     chmod +x /usr/bin/ghcup
 
 ARG GHC_VERSION
-RUN ghcup install ghc $GHC_VERSION &&\
+RUN ghcup install ghc $GHC_VERSION -u https://downloads.haskell.org/ghc/8.10.3/ghc-8.10.3-x86_64-alpine3.10-linux-integer-simple.tar.xz &&\
     ghcup set ghc $GHC_VERSION
 
 ARG CABAL_VERSION
@@ -51,16 +51,18 @@ RUN ghcup install cabal $CABAL_VERSION &&\
 
 # Download, verify, and install stack
 RUN echo "Downloading and installing stack" &&\
-    STACK_VERSION=2.3.1 &&\
-    STACK_SHA256="4bae8830b2614dddf3638a6d1a7bbbc3a5a833d05b2128eae37467841ac30e47  stack-${STACK_VERSION}-linux-x86_64-static.tar.gz" &&\
+    STACK_VERSION=2.5.1 &&\
+    STACK_DIRNAME="stack-${STACK_VERSION}-linux-x86_64" &&\
+    STACK_ARCHIVE="${STACK_DIRNAME}.tar.gz" &&\
+    STACK_SHA256="c83b6c93d6541c0bce2175085a04062020f4160a86116e20f3b343b562f2d1e8  ${STACK_ARCHIVE}" &&\
     cd /tmp &&\
-    wget -P /tmp/ "https://github.com/commercialhaskell/stack/releases/download/v${STACK_VERSION}/stack-${STACK_VERSION}-linux-x86_64-static.tar.gz" &&\
+    wget -P /tmp/ "https://github.com/commercialhaskell/stack/releases/download/v${STACK_VERSION}/${STACK_ARCHIVE}" &&\
     if ! echo -n "${STACK_SHA256}" | sha256sum -c -; then \
         echo "stack-${STACK_VERSION} checksum failed" >&2 &&\
         exit 1 ;\
     fi ;\
-    tar -xvzf /tmp/stack-${STACK_VERSION}-linux-x86_64-static.tar.gz &&\
-    cp -L /tmp/stack-${STACK_VERSION}-linux-x86_64-static/stack /usr/bin/stack &&\
-    rm /tmp/stack-${STACK_VERSION}-linux-x86_64-static.tar.gz &&\
-    rm -rf /tmp/stack-${STACK_VERSION}-linux-x86_64-static &&\
+    tar -xvzf /tmp/${STACK_ARCHIVE} &&\
+    cp -L /tmp/${STACK_DIRNAME}/stack /usr/bin/stack &&\
+    rm /tmp/${STACK_ARCHIVE} &&\
+    rm -rf /tmp/${STACK_DIRNAME} &&\
     stack config set system-ghc --global true
