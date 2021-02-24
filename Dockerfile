@@ -42,7 +42,7 @@ RUN echo "Downloading and installing ghcup" &&\
     chmod +x /usr/bin/ghcup
 
 ARG GHC_VERSION
-RUN ghcup install ghc $GHC_VERSION -u https://downloads.haskell.org/ghc/8.10.3/ghc-8.10.3-x86_64-alpine3.10-linux-integer-simple.tar.xz &&\
+RUN ghcup install ghc $GHC_VERSION &&\ 
     ghcup set ghc $GHC_VERSION
 
 ARG CABAL_VERSION
