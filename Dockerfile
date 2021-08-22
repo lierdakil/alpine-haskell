@@ -31,8 +31,8 @@ RUN apk upgrade --no-cache &&\
 
 # Download, verify, and install ghcup
 RUN echo "Downloading and installing ghcup" &&\
-    GHCUP_VERSION="0.1.15.2" &&\
-    GHCUP_SHA256="1eb1bb318a327754f42eaa2245bc81fe53be7c791160d28a186893ded3004ed7  /usr/bin/ghcup" &&\
+    GHCUP_VERSION="0.1.16.2" &&\
+    GHCUP_SHA256="d5e43b95ce1d42263376e414f7eb7c5dd440271c7c6cd9bad446fdeff3823893  /usr/bin/ghcup" &&\
     cd /tmp &&\
     wget -O /usr/bin/ghcup "https://downloads.haskell.org/~ghcup/${GHCUP_VERSION}/x86_64-linux-ghcup-${GHCUP_VERSION}" &&\
     if ! echo -n "${GHCUP_SHA256}" | sha256sum -c -; then \
@@ -42,7 +42,7 @@ RUN echo "Downloading and installing ghcup" &&\
     chmod +x /usr/bin/ghcup
 
 ARG GHC_VERSION
-RUN ghcup install ghc $GHC_VERSION &&\ 
+RUN ghcup install ghc $GHC_VERSION &&\
     ghcup set ghc $GHC_VERSION
 
 ARG CABAL_VERSION
@@ -51,10 +51,10 @@ RUN ghcup install cabal $CABAL_VERSION &&\
 
 # Download, verify, and install stack
 RUN echo "Downloading and installing stack" &&\
-    STACK_VERSION=2.5.1 &&\
+    STACK_VERSION=2.7.3 &&\
     STACK_DIRNAME="stack-${STACK_VERSION}-linux-x86_64" &&\
     STACK_ARCHIVE="${STACK_DIRNAME}.tar.gz" &&\
-    STACK_SHA256="c83b6c93d6541c0bce2175085a04062020f4160a86116e20f3b343b562f2d1e8  ${STACK_ARCHIVE}" &&\
+    STACK_SHA256="a6c090555fa1c64aa61c29aa4449765a51d79e870cf759cde192937cd614e72b  ${STACK_ARCHIVE}" &&\
     cd /tmp &&\
     wget -P /tmp/ "https://github.com/commercialhaskell/stack/releases/download/v${STACK_VERSION}/${STACK_ARCHIVE}" &&\
     if ! echo -n "${STACK_SHA256}" | sha256sum -c -; then \
