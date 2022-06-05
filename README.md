@@ -1,6 +1,6 @@
 # GHC, Alpine, Stack, and Docker
 
-This is a barebones version of <https://github.com/lierdakil/alpine-haskell-stack> that just uses prebuilt GHC instead of builing it.
+This is a barebones version of <https://github.com/lierdakil/alpine-haskell-stack> that just uses prebuilt GHC instead of building it.
 
 # Quick Start
 
