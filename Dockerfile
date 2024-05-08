@@ -1,4 +1,4 @@
-FROM alpine:3.12 AS base
+FROM alpine:3.19 AS base
 
 # Add ghcup's bin directory to the PATH so that the versions of GHC it builds
 # are available in the build layers
@@ -31,8 +31,8 @@ RUN apk upgrade --no-cache &&\
 
 # Download, verify, and install ghcup
 RUN echo "Downloading and installing ghcup" &&\
-    GHCUP_VERSION="0.1.19.2" &&\
-    GHCUP_SHA256="25b7fc417c1a811dd7ff439b67ea647a59cf5b8d71b274f97e917d50b2150d5b  /usr/bin/ghcup" &&\
+    GHCUP_VERSION="0.1.22.0" &&\
+    GHCUP_SHA256="bf213f4dfd2271b46ca52e2f14e96850ce32e9115e5acc90f1dc5a4e815e32af  /usr/bin/ghcup" &&\
     cd /tmp &&\
     wget -O /usr/bin/ghcup "https://downloads.haskell.org/~ghcup/${GHCUP_VERSION}/x86_64-linux-ghcup-${GHCUP_VERSION}" &&\
     if ! echo -n "${GHCUP_SHA256}" | sha256sum -c -; then \
@@ -41,24 +41,6 @@ RUN echo "Downloading and installing ghcup" &&\
     fi ;\
     chmod +x /usr/bin/ghcup
 
-# Download, verify, and install stack
-RUN echo "Downloading and installing stack" &&\
-    STACK_VERSION=2.7.5 &&\
-    STACK_DIRNAME="stack-${STACK_VERSION}-linux-x86_64" &&\
-    STACK_ARCHIVE="${STACK_DIRNAME}.tar.gz" &&\
-    STACK_SHA256="9bcd165358d4dcafd2b33320d4fe98ce72faaf62300cc9b0fb86a27eb670da50  ${STACK_ARCHIVE}" &&\
-    cd /tmp &&\
-    wget -P /tmp/ "https://github.com/commercialhaskell/stack/releases/download/v${STACK_VERSION}/${STACK_ARCHIVE}" &&\
-    if ! echo -n "${STACK_SHA256}" | sha256sum -c -; then \
-        echo "stack-${STACK_VERSION} checksum failed" >&2 &&\
-        exit 1 ;\
-    fi ;\
-    tar -xvzf /tmp/${STACK_ARCHIVE} &&\
-    cp -L /tmp/${STACK_DIRNAME}/stack /usr/bin/stack &&\
-    rm /tmp/${STACK_ARCHIVE} &&\
-    rm -rf /tmp/${STACK_DIRNAME} &&\
-    stack config set system-ghc --global true
-
 ARG GHC_VERSION
 RUN ghcup install ghc $GHC_VERSION &&\
     ghcup set ghc $GHC_VERSION
@@ -66,3 +48,8 @@ RUN ghcup install ghc $GHC_VERSION &&\
 ARG CABAL_VERSION
 RUN ghcup install cabal $CABAL_VERSION &&\
     ghcup set cabal $CABAL_VERSION
+
+ARG STACK_VERSION
+RUN ghcup install stack $STACK_VERSION &&\
+    ghcup set stack $STACK_VERSION &&\
+    stack config set system-ghc --global true
